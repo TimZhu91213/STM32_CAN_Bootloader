@@ -1,0 +1,16 @@
+*.o
+*.elf
+*.bin
+*.hex
+*.map
+*.lst
+*.uvguix*
+*.o
+Debug/
+Release/
+MDK-ARM/RTE/
+.vscode/
+__pycache__/
+*.pyc
+.venv/
+venv/
