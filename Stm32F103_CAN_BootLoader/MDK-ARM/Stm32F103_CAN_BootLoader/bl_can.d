@@ -7,6 +7,7 @@ stm32f103_can_bootloader\bl_can.o: ../Bootloader/Config/bl_config.h
 stm32f103_can_bootloader\bl_can.o: ../Bootloader/Config/targets/stm32f103c8.h
 stm32f103_can_bootloader\bl_can.o: ../Bootloader/Inc/bl_flash.h
 stm32f103_can_bootloader\bl_can.o: ../Bootloader/Inc/bl_crc.h
+stm32f103_can_bootloader\bl_can.o: ../Bootloader/Inc/bl_app_jump.h
 stm32f103_can_bootloader\bl_can.o: ../Core/Inc/main.h
 stm32f103_can_bootloader\bl_can.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h
 stm32f103_can_bootloader\bl_can.o: ../Core/Inc/stm32f1xx_hal_conf.h

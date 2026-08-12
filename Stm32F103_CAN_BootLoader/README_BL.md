@@ -16,8 +16,8 @@ CubeMX 工程已接入 `can-bootloader` 协议层。
 3. Include 已含 `Bootloader/Inc|Config|Protocol`
 4. Rebuild → Download
 
-上电：若 APP 置了升级魔数 → 留在 BL；否则 **立即跳转 APP**。  
-`JUMP_APP` **只应答、不软跳转**；烧录结束后停在 BL，**复位/下电** 后进 APP。  
+上电：若 APP 置了升级魔数 → 留在 BL；否则 **立即跳转 APP**（`SCB->VTOR=0x08004000`）。  
+`JUMP_APP`：应答后 **VTOR 软跳转进入 APP**（无需再断电）。  
 运行中升级：APP 检测 `0x700` → `bl_app_request_bootloader()`。
 
 ### 运行中再进 Bootloader（APP 侧）

@@ -21,6 +21,9 @@ tools/            Python 烧录脚本（主站）
 
 换 F407：改 `config/targets/stm32f407vg.h`，并在 `bl_flash.c` 实现扇区擦除。
 
+跳转 APP：使用 `SCB->VTOR = APP基址`（不再做 SRAM 向量 remap）。
+`JUMP_APP` 应答后直接软跳转进入应用。
+
 ## 可改参数（移植入口）
 
 | 文件 | 改什么 |
@@ -50,9 +53,9 @@ python flash_can.py --bin app.bin --interface candlelight --channel 0
    Include：`config`、`config/targets`、`protocol`、`bootloader/Inc`
 3. 实现 `bl_can_hw_init/send/recv`（替换 `bl_can.c` 里 weak 空实现）
 4. 链接脚本用 `bootloader/linker/stm32f103c8_bl.ld`
-5. 应用工程用 `stm32f103c8_app.ld`，向量表在 `0x08004000`
+5. 应用工程用 `stm32f103c8_app.ld`，向量表在 `0x08004000`，并设置 `VECT_TAB_OFFSET=0x4000`
 
-F103 无 `VTOR`：跳转应用前需 SRAM 向量重映射（`bl_app_jump.c` 已留 TODO）。
+F103 使用 `SCB->VTOR` 指向 APP；`JUMP_APP` 后直接软跳转。
 
 ## 与 DieBieMS 的对应
 
@@ -63,3 +66,7 @@ F103 无 `VTOR`：跳转应用前需 SRAM 向量重映射（`bl_app_jump.c` 已�
 | `COMM_WRITE_NEW_APP_DATA` | `SET_ADDR` + `WRITE_DATA` |
 | 暂存区 + 独立 BL 仓 | BL 在 Flash 头，直写 APP 区（64KB 更省空间） |
 | DieBieMS-Tool | `tools/flash_can.py` |
+
+## Hex2Bin
+由于keil等ide大部分时候都不给出bin，给出mot、hex等文件，目前python脚本只认bin文件，并且bin文件体积也最小，生成的hex文件通过hex2bin.exe转换出来，再使用bin烧录
+

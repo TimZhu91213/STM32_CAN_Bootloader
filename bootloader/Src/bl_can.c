@@ -9,6 +9,7 @@
 #include "bl_config.h"
 #include "bl_flash.h"
 #include "bl_crc.h"
+#include "bl_app_jump.h"
 
 #include <string.h>
 
@@ -189,11 +190,13 @@ static void handle_frame(const uint8_t *data, uint8_t dlc)
         handle_crc(payload, plen);
         break;
     case BL_CMD_JUMP_APP:
-        /* ACK only — APP runs after next power cycle / NRST */
+        /* ACK then VTOR soft-jump into APP */
         (void)bl_flash_flush_pending();
         s_state = ST_IDLE;
-        s_hold_until_reset = 1u;
+        s_image_size = 0;
+        s_hold_until_reset = 0;
         send_rsp(BL_CMD_JUMP_APP, BL_STATUS_OK, 0, 0);
+        bl_app_jump();
         break;
     case BL_CMD_ABORT:
         s_state = ST_IDLE;

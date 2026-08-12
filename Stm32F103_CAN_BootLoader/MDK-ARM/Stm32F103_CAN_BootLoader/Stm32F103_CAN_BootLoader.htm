@@ -3,9 +3,9 @@
 <title>Static Call Graph - [Stm32F103_CAN_BootLoader\Stm32F103_CAN_BootLoader.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image Stm32F103_CAN_BootLoader\Stm32F103_CAN_BootLoader.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Wed Aug 12 15:03:09 2026
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Wed Aug 12 15:35:51 2026
 <BR><P>
-<H3>Maximum Stack Usage =        212 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
+<H3>Maximum Stack Usage =        204 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
 __rt_entry_main &rArr; main &rArr; bl_can_poll &rArr; handle_frame &rArr; handle_write_data &rArr; send_rsp &rArr; bl_can_hw_send &rArr; HAL_CAN_AddTxMessage
 <P>
@@ -199,7 +199,7 @@ Global Symbols
 <P><STRONG><a name="[c8]"></a>__rt_entry_postsh_1</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, __rtentry2.o(.ARM.Collect$$rtentry$$00000009))
 
 <P><STRONG><a name="[43]"></a>__rt_entry_main</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, __rtentry2.o(.ARM.Collect$$rtentry$$0000000D))
-<BR><BR>[Stack]<UL><LI>Max Depth = 212 + Unknown Stack Size
+<BR><BR>[Stack]<UL><LI>Max Depth = 204 + Unknown Stack Size
 <LI>Call Chain = __rt_entry_main &rArr; main &rArr; bl_can_poll &rArr; handle_frame &rArr; handle_write_data &rArr; send_rsp &rArr; bl_can_hw_send &rArr; HAL_CAN_AddTxMessage
 </UL>
 <BR>[Calls]<UL><LI><a href="#[44]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
@@ -608,6 +608,7 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GetTick
 </UL>
 <BR>[Called By]<UL><LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bl_can_hw_send
+<LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;handle_frame
 </UL>
 
 <P><STRONG><a name="[57]"></a>HAL_CAN_TxMailbox0AbortCallback</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32f1xx_hal_can.o(i.HAL_CAN_TxMailbox0AbortCallback))
@@ -645,6 +646,7 @@ Global Symbols
 </UL>
 <BR>[Called By]<UL><LI><a href="#[44]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 <LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;send_rsp
+<LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;handle_frame
 <LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;handle_erase
 </UL>
 
@@ -910,6 +912,7 @@ Global Symbols
 <LI><a href="#[85]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_SuspendTick
 </UL>
 <BR>[Called By]<UL><LI><a href="#[44]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+<LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;handle_frame
 </UL>
 
 <P><STRONG><a name="[86]"></a>bl_can_hw_heartbeat</STRONG> (Thumb, 78 bytes, Stack size 16 bytes, bl_can_hw_f103.o(i.bl_can_hw_heartbeat))
@@ -971,7 +974,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[93]"></a>bl_can_poll</STRONG> (Thumb, 66 bytes, Stack size 24 bytes, bl_can.o(i.bl_can_poll))
-<BR><BR>[Stack]<UL><LI>Max Depth = 212<LI>Call Chain = bl_can_poll &rArr; handle_frame &rArr; handle_write_data &rArr; send_rsp &rArr; bl_can_hw_send &rArr; HAL_CAN_AddTxMessage
+<BR><BR>[Stack]<UL><LI>Max Depth = 204<LI>Call Chain = bl_can_poll &rArr; handle_frame &rArr; handle_write_data &rArr; send_rsp &rArr; bl_can_hw_send &rArr; HAL_CAN_AddTxMessage
 </UL>
 <BR>[Calls]<UL><LI><a href="#[8c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bl_can_hw_recv
 <LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bl_can_hw_heartbeat
@@ -1041,7 +1044,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[44]"></a>main</STRONG> (Thumb, 84 bytes, Stack size 0 bytes, main.o(i.main))
-<BR><BR>[Stack]<UL><LI>Max Depth = 212<LI>Call Chain = main &rArr; bl_can_poll &rArr; handle_frame &rArr; handle_write_data &rArr; send_rsp &rArr; bl_can_hw_send &rArr; HAL_CAN_AddTxMessage
+<BR><BR>[Stack]<UL><LI>Max Depth = 204<LI>Call Chain = main &rArr; bl_can_poll &rArr; handle_frame &rArr; handle_write_data &rArr; send_rsp &rArr; bl_can_hw_send &rArr; HAL_CAN_AddTxMessage
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bl_request_consume_update_flag
 <LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bl_flash_init
@@ -1106,10 +1109,13 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;handle_frame
 </UL>
 
-<P><STRONG><a name="[94]"></a>handle_frame</STRONG> (Thumb, 166 bytes, Stack size 32 bytes, bl_can.o(i.handle_frame))
-<BR><BR>[Stack]<UL><LI>Max Depth = 188<LI>Call Chain = handle_frame &rArr; handle_write_data &rArr; send_rsp &rArr; bl_can_hw_send &rArr; HAL_CAN_AddTxMessage
+<P><STRONG><a name="[94]"></a>handle_frame</STRONG> (Thumb, 186 bytes, Stack size 24 bytes, bl_can.o(i.handle_frame))
+<BR><BR>[Stack]<UL><LI>Max Depth = 180<LI>Call Chain = handle_frame &rArr; handle_write_data &rArr; send_rsp &rArr; bl_can_hw_send &rArr; HAL_CAN_AddTxMessage
 </UL>
-<BR>[Calls]<UL><LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bl_flash_flush_pending
+<BR>[Calls]<UL><LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_CAN_Stop
+<LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bl_app_jump
+<LI><a href="#[6a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_Delay
+<LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bl_flash_flush_pending
 <LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;send_rsp
 <LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;handle_write_data
 <LI><a href="#[a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;handle_set_addr

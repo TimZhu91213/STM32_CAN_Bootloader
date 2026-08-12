@@ -9,6 +9,7 @@
 #include "bl_config.h"
 #include "bl_flash.h"
 #include "bl_crc.h"
+#include "bl_app_jump.h"
 #include "main.h"
 #include "can.h"
 
@@ -205,12 +206,17 @@ static void handle_frame(const uint8_t *data, uint8_t dlc)
         handle_crc(payload, plen);
         break;
     case BL_CMD_JUMP_APP:
-        /* Do not soft-jump: ACK and idle until power cycle / NRST.
-         * APP is entered only from main() after a clean reset. */
+        /* ACK then VTOR soft-jump into APP (same path as cold-boot jump). */
         (void)bl_flash_flush_pending();
         s_state = ST_IDLE;
-        s_hold_until_reset = 1u;
+        s_image_size = 0;
+        s_hold_until_reset = 0;
         send_rsp(BL_CMD_JUMP_APP, BL_STATUS_OK, 0, 0);
+        /* Let JUMP ACK finish on the bus before tearing down IRQs/CAN */
+        HAL_Delay(2u);
+        (void)HAL_CAN_Stop(&hcan);
+        bl_app_jump();
+        /* If jump fails (invalid APP), fall through to BL idle loop */
         break;
     case BL_CMD_ABORT:
         s_state = ST_IDLE;

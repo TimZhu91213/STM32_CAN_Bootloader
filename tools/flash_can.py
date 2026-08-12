@@ -103,7 +103,7 @@ class CanTransport:
             cmd = expect_cmd if expect_cmd is not None else BL_CMD_GET_INFO
             if cmd == BL_CMD_GET_INFO:
                 return bytes(
-                    [BL_CMD_GET_INFO, BL_STATUS_OK, BL_PROTOCOL_VERSION, 0, 18, 0x01, 0x00, 0x4C]
+                    [BL_CMD_GET_INFO, BL_STATUS_OK, BL_PROTOCOL_VERSION, 0, 19, 0x01, 0x00, 0x4C]
                 )
             if cmd == BL_CMD_WRITE_DATA and expect_seq is not None:
                 return bytes([BL_CMD_WRITE_DATA, BL_STATUS_OK, expect_seq & 0xFF, 0, 0, 0, 0, 0])
@@ -317,7 +317,7 @@ def jump_app(tr: CanTransport, timeout: float, send_only: bool) -> None:
         print("JUMP_APP sent (no response — device may have reset)")
     else:
         require_ok(rsp, BL_CMD_JUMP_APP)
-        print("JUMP_APP ok — device stays in bootloader until power cycle")
+        print("JUMP_APP ok — device jumping to application (VTOR)")
 
 
 def abort_session(tr: CanTransport, timeout: float) -> None:

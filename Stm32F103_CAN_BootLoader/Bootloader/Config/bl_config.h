@@ -23,7 +23,7 @@
 /* ========== Protocol / version ========== */
 #define BL_PROTOCOL_VERSION         1U
 #define BL_FW_VERSION_MAJOR         0U
-#define BL_FW_VERSION_MINOR         18U
+#define BL_FW_VERSION_MINOR         19U
 
 /* ========== CAN identifiers (11-bit standard) ==========
  * Host -> device : BL_CAN_ID_CMD
