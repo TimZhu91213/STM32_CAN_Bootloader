@@ -1,0 +1,13 @@
+; Bootloader scatter: first 16KB Flash; .RamFunc runs from SRAM
+LR_IROM1 0x08000000 0x00004000  {
+  ER_IROM1 0x08000000 0x00004000  {
+   *.o (RESET, +First)
+   *(InRoot$$Sections)
+   .ANY (+RO)
+   .ANY (+XO)
+  }
+  RW_IRAM1 0x20000000 0x00005000  {
+   *(.RamFunc)
+   .ANY (+RW +ZI)
+  }
+}
