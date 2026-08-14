@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="flash_can_pcan" type="PythonConfigurationType" factoryName="Python">
+  <configuration default="false" name="flash_test_app_400kb" type="PythonConfigurationType" factoryName="Python">
     <module name="can-bootloader" />
     <option name="ENV_FILES" value="" />
     <option name="INTERPRETER_OPTIONS" value="" />
@@ -13,7 +13,7 @@
     <option name="ADD_CONTENT_ROOTS" value="true" />
     <option name="ADD_SOURCE_ROOTS" value="true" />
     <option name="SCRIPT_NAME" value="$PROJECT_DIR$/tools/flash_can.py" />
-    <option name="PARAMETERS" value="--bin ../F103_0804_simulink.bin --interface pcan --channel PCAN_USBBUS1" />
+    <option name="PARAMETERS" value="--bin ../test_app_400kb.bin --interface pcan --channel PCAN_USBBUS1 --max-size 507904 --no-jump" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="false" />
     <option name="MODULE_MODE" value="false" />

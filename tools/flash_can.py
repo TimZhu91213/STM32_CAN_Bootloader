@@ -14,6 +14,7 @@ Examples:
   python flash_can.py --hex ../F407_VET6_Test.hex --max-size 507904
   python flash_can.py --bin _test_app.bin --send-only
   python flash_can.py --bin app.bin --dry-run
+  python flash_can.py --bin app.bin --no-progress-window
 """
 
 from __future__ import annotations
@@ -25,6 +26,7 @@ import sys
 import time
 from pathlib import Path
 
+from flash_progress import FlashProgressUI
 from bl_protocol import (
     BL_CAN_ID_CMD,
     BL_CAN_ID_RSP,
@@ -248,6 +250,7 @@ def write_image(
     progress: bool,
     send_only: bool,
     gap_s: float,
+    on_progress=None,
 ) -> None:
     set_addr(tr, 0, timeout, send_only)
     if gap_s:
@@ -274,6 +277,10 @@ def write_image(
             tr.send(bytes([BL_CMD_WRITE_DATA, seq & 0xFF]) + chunk)
             offset += len(chunk)
             seq = (seq + 1) & 0xFF
+            if on_progress is not None and (
+                offset >= total or offset == len(chunk) or offset % max(total // 200, 6144) == 0
+            ):
+                on_progress(offset, total)
             if gap_s:
                 time.sleep(gap_s)
             continue
@@ -295,7 +302,12 @@ def write_image(
         tr.drain(0.0)
         offset += len(chunk)
         seq = (seq + 1) & 0xFF
-        if (offset == len(chunk)) or (offset % 64 == 0) or (offset >= total):
+        if on_progress is not None and (
+            offset >= total or offset == len(chunk) or offset % max(total // 200, 6144) == 0
+        ):
+            on_progress(offset, total)
+        log_every = 4096 if on_progress is not None else 64
+        if (offset == len(chunk)) or (offset % log_every == 0) or (offset >= total):
             print(f"  WRITE {offset}/{total}")
         if gap_s:
             time.sleep(gap_s)
@@ -478,7 +490,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     p.add_argument("--interface", default="pcan", help="python-can interface (pcan/candlelight/socketcan/...)")
     p.add_argument("--channel", default="PCAN_USBBUS1", help="CAN channel (PCAN: PCAN_USBBUS1)")
     p.add_argument("--bitrate", type=int, default=500000, help="CAN bitrate")
-    p.add_argument("--gap-ms", type=float, default=2.0, help="Delay between frames (ms)")
+    p.add_argument("--gap-ms", type=float, default=1.0, help="Delay between frames (ms, default 1)")
     p.add_argument("--timeout", type=float, default=3.0, help="Per-frame response timeout (s)")
     p.add_argument("--dry-run", action="store_true", help="Do not open CAN; simulate OK replies")
     p.add_argument(
@@ -488,7 +500,16 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     )
     p.add_argument("--verbose", action="store_true", help="Print every TX/RX frame")
     p.add_argument("--no-jump", action="store_true", help="Skip JUMP_APP")
-    p.add_argument("--no-progress", action="store_true", help="Disable tqdm")
+    p.add_argument(
+        "--no-progress",
+        action="store_true",
+        help="Disable popup progress window and tqdm",
+    )
+    p.add_argument(
+        "--no-progress-window",
+        action="store_true",
+        help="Do not pop up a percentage window (tqdm still allowed)",
+    )
     p.add_argument(
         "--max-size",
         type=int,
@@ -523,6 +544,13 @@ def main(argv: list[str] | None = None) -> int:
 
     send_only = bool(args.send_only)
     gap_s = args.gap_ms / 1000.0
+    use_window = not args.no_progress and not args.no_progress_window
+    ui = None
+    if use_window:
+        ui = FlashProgressUI(bin_path.name, len(image))
+        if not ui.start():
+            print("warning: progress window failed to open")
+            ui = None
 
     tr = CanTransport(
         args.interface,
@@ -537,31 +565,46 @@ def main(argv: list[str] | None = None) -> int:
             f"mode={mode} image={bin_path} size={len(image)} "
             f"crc=0x{crc32_mpeg2_like(image):08X}"
         )
+        if ui is not None:
+            ui.set_stage("握手 GET_INFO", pct=1.0)
         handshake(tr, args.timeout, send_only)
         if gap_s:
             time.sleep(gap_s)
+        if ui is not None:
+            ui.set_stage("擦除 Flash", pct=4.0, detail="按扇区擦除，可能需要数秒")
         erase(tr, len(image), max(args.timeout, 5.0), send_only)
         if gap_s:
             time.sleep(gap_s)
+        if ui is not None:
+            ui.begin_write()
         write_image(
             tr,
             image,
             args.timeout,
-            progress=not args.no_progress,
+            progress=not args.no_progress and ui is None,
             send_only=send_only,
             gap_s=gap_s,
+            on_progress=None if ui is None else ui.set_write,
         )
         if gap_s:
             time.sleep(gap_s)
+        if ui is not None:
+            ui.set_stage("CRC 校验", pct=96.0)
         verify_crc(tr, image, args.timeout, send_only)
         if not args.no_jump:
             if gap_s:
                 time.sleep(gap_s)
+            if ui is not None:
+                ui.set_stage("跳转 APP", pct=99.0)
             jump_app(tr, args.timeout, send_only)
         print("done")
+        if ui is not None:
+            ui.finish(True, "烧录完成")
         return 0
     except Exception as exc:
         print(f"FAILED: {exc}", file=sys.stderr)
+        if ui is not None:
+            ui.finish(False, str(exc))
         if not send_only and not args.dry_run:
             try:
                 abort_session(tr, args.timeout)
@@ -570,6 +613,8 @@ def main(argv: list[str] | None = None) -> int:
         return 1
     finally:
         tr.close()
+        if ui is not None:
+            ui.close()
 
 
 if __name__ == "__main__":
