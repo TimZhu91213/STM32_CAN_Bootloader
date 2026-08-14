@@ -30,4 +30,7 @@
 /* ---- Clock (informational for host GET_INFO) ---- */
 #define BL_MCU_ID_CODE              0x00000410UL  /* F1 family marker for script */
 
+/* Soft-reset magic near top of 20KB SRAM (0x20000000..0x20004FFF) */
+#define BL_SHARED_MAGIC_ADDR_DEFAULT (0x20004FF0UL)
+
 #endif /* BL_TARGET_STM32F103C8_H */
