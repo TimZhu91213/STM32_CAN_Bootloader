@@ -10,6 +10,7 @@
 #include "bl_flash.h"
 #include "bl_crc.h"
 #include "bl_app_jump.h"
+#include "bl_rtc.h"
 #include "main.h"
 
 #include <string.h>
@@ -171,6 +172,30 @@ static void handle_crc(const uint8_t *payload, uint8_t len)
     send_rsp(BL_CMD_CRC, BL_STATUS_OK, 0, 0);
 }
 
+static void handle_set_rtc(const uint8_t *payload, uint8_t len)
+{
+    uint32_t unix_ts;
+
+    if (len < 4u) {
+        send_rsp(BL_CMD_SET_RTC, BL_STATUS_ERR_PARAM, 0, 0);
+        return;
+    }
+    if (s_state != ST_IDLE) {
+        send_rsp(BL_CMD_SET_RTC, BL_STATUS_ERR_STATE, 0, 0);
+        return;
+    }
+
+    unix_ts = (uint32_t)payload[0] | ((uint32_t)payload[1] << 8) |
+              ((uint32_t)payload[2] << 16) | ((uint32_t)payload[3] << 24);
+
+    if (!bl_rtc_set_from_unix(unix_ts)) {
+        send_rsp(BL_CMD_SET_RTC, BL_STATUS_ERR_STATE, 0, 0);
+        return;
+    }
+
+    send_rsp(BL_CMD_SET_RTC, BL_STATUS_OK, 0, 0);
+}
+
 static void handle_frame(const uint8_t *data, uint8_t dlc)
 {
     if (dlc < 1u) {
@@ -215,6 +240,9 @@ static void handle_frame(const uint8_t *data, uint8_t dlc)
         s_state = ST_IDLE;
         s_image_size = 0;
         send_rsp(BL_CMD_ABORT, BL_STATUS_OK, 0, 0);
+        break;
+    case BL_CMD_SET_RTC:
+        handle_set_rtc(payload, plen);
         break;
     default:
         send_rsp(cmd, BL_STATUS_ERR_UNKNOWN, 0, 0);

@@ -22,6 +22,7 @@ BL_CMD_WRITE_DATA = 0x04
 BL_CMD_CRC = 0x05
 BL_CMD_JUMP_APP = 0x06
 BL_CMD_ABORT = 0x07
+BL_CMD_SET_RTC = 0x08  # payload: unix_ts u32 LE (PC local time)
 
 # Status
 BL_STATUS_OK = 0x00

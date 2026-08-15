@@ -4,10 +4,11 @@ CAN bootloader host flasher (F103 first; params portable).
 
 Flow (mirrors DieBieMS erase -> write chunks -> jump):
   1) GET_INFO handshake
-  2) ERASE(image_size)
-  3) SET_ADDR(0) + WRITE_DATA stream
-  4) CRC(image)
-  5) JUMP_APP
+  2) SET_RTC (PC local time, optional --no-set-rtc)
+  3) ERASE(image_size)
+  4) SET_ADDR(0) + WRITE_DATA stream
+  5) CRC(image)
+  6) JUMP_APP
 
 Examples:
   python flash_can.py --bin app.bin --interface pcan --channel PCAN_USBBUS1
@@ -20,6 +21,7 @@ Examples:
 from __future__ import annotations
 
 import argparse
+import datetime
 import struct
 import subprocess
 import sys
@@ -36,8 +38,10 @@ from bl_protocol import (
     BL_CMD_GET_INFO,
     BL_CMD_JUMP_APP,
     BL_CMD_SET_ADDR,
+    BL_CMD_SET_RTC,
     BL_CMD_WRITE_DATA,
     BL_PROTOCOL_VERSION,
+    BL_STATUS_ERR_UNKNOWN,
     BL_STATUS_OK,
     CHUNK_DATA_BYTES,
     F103_APP_MAX_SIZE,
@@ -192,6 +196,32 @@ def handshake(tr: CanTransport, timeout: float, send_only: bool) -> None:
         "  - Confirm RX 0x701 starts with 01 (GET_INFO), not 07 (ABORT leftover)."
     )
     raise RuntimeError(last_err or "GET_INFO failed")
+
+
+def set_rtc(tr: CanTransport, timeout: float, send_only: bool) -> None:
+    ts = int(datetime.datetime.now().timestamp())
+    when = datetime.datetime.now().replace(microsecond=0).isoformat(sep=" ")
+    print(f"SET_RTC unix={ts} ({when})")
+    if send_only:
+        tr.send(bytes([BL_CMD_SET_RTC]) + u32_le(ts))
+        print("SET_RTC sent (send-only, no wait)")
+        return
+
+    tr.send(bytes([BL_CMD_SET_RTC]) + u32_le(ts))
+    rsp = tr.recv(timeout, BL_CMD_SET_RTC)
+    if rsp is None:
+        raise RuntimeError(f"timeout waiting for response to cmd 0x{BL_CMD_SET_RTC:02X}")
+    if len(rsp) < 2:
+        raise RuntimeError(f"short SET_RTC response: {rsp.hex()}")
+    status = rsp[1]
+    if status == BL_STATUS_OK:
+        print("SET_RTC ok")
+        return
+    if status == BL_STATUS_ERR_UNKNOWN:
+        print("warning: device BL does not support SET_RTC (ERR_UNKNOWN), continuing")
+        return
+    name = STATUS_NAME.get(status, f"0x{status:02X}")
+    raise RuntimeError(f"device error on cmd 0x{BL_CMD_SET_RTC:02X}: {name}")
 
 
 def erase(tr: CanTransport, image_size: int, timeout: float, send_only: bool) -> None:
@@ -490,7 +520,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     p.add_argument("--interface", default="pcan", help="python-can interface (pcan/candlelight/socketcan/...)")
     p.add_argument("--channel", default="PCAN_USBBUS1", help="CAN channel (PCAN: PCAN_USBBUS1)")
     p.add_argument("--bitrate", type=int, default=500000, help="CAN bitrate")
-    p.add_argument("--gap-ms", type=float, default=1.0, help="Delay between frames (ms, default 1)")
+    p.add_argument("--gap-ms", type=float, default=0.5, help="Delay between frames (ms, default 0.5)")
     p.add_argument("--timeout", type=float, default=3.0, help="Per-frame response timeout (s)")
     p.add_argument("--dry-run", action="store_true", help="Do not open CAN; simulate OK replies")
     p.add_argument(
@@ -500,6 +530,11 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     )
     p.add_argument("--verbose", action="store_true", help="Print every TX/RX frame")
     p.add_argument("--no-jump", action="store_true", help="Skip JUMP_APP")
+    p.add_argument(
+        "--no-set-rtc",
+        action="store_true",
+        help="Skip SET_RTC after handshake (debug / boards without LSE)",
+    )
     p.add_argument(
         "--no-progress",
         action="store_true",
@@ -570,6 +605,12 @@ def main(argv: list[str] | None = None) -> int:
         handshake(tr, args.timeout, send_only)
         if gap_s:
             time.sleep(gap_s)
+        if not args.no_set_rtc:
+            if ui is not None:
+                ui.set_stage("同步 RTC", pct=2.0)
+            set_rtc(tr, args.timeout, send_only)
+            if gap_s:
+                time.sleep(gap_s)
         if ui is not None:
             ui.set_stage("擦除 Flash", pct=4.0, detail="按扇区擦除，可能需要数秒")
         erase(tr, len(image), max(args.timeout, 5.0), send_only)

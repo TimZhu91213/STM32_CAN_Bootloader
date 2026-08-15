@@ -3,8 +3,8 @@ stm32f407_can2_bootloader/bl_can.o: ..\Bootloader\Src\bl_can.c \
   ..\Bootloader\Config\bl_config.h \
   ..\Bootloader\Config\targets\stm32f407ve.h \
   ..\Bootloader\Inc\bl_flash.h ..\Bootloader\Inc\bl_crc.h \
-  ..\Bootloader\Inc\bl_app_jump.h ..\Core\Inc\main.h \
-  ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal.h \
+  ..\Bootloader\Inc\bl_app_jump.h ..\Bootloader\Inc\bl_rtc.h \
+  ..\Core\Inc\main.h ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal.h \
   ..\Core\Inc\stm32f4xx_hal_conf.h \
   ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_rcc.h \
   ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_def.h \
@@ -26,4 +26,6 @@ stm32f407_can2_bootloader/bl_can.o: ..\Bootloader\Src\bl_can.c \
   ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_flash_ramfunc.h \
   ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_pwr.h \
   ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_pwr_ex.h \
+  ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_rtc.h \
+  ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_rtc_ex.h \
   ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_uart.h

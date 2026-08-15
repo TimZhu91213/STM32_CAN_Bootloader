@@ -39,4 +39,8 @@
 #define BL_SESSION_IDLE_MS          10000U
 #define BL_INFO_MAGIC               0x424C0001UL
 
+/* Must match F407_VET6_Test APP rtc.c (RTC_BKP_DR0 / 0x32F2). */
+#define BL_RTC_BKP_MAGIC            0x32F2U
+#define BL_RTC_BKP_REG              0U  /* RTC_BKP_DR0 */
+
 #endif /* BL_CONFIG_H */

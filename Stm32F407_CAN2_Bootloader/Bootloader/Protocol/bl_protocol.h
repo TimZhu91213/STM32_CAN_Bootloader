@@ -26,6 +26,7 @@ typedef enum {
     BL_CMD_CRC          = 0x05, /* payload: crc32 u32 LE over whole image      */
     BL_CMD_JUMP_APP     = 0x06, /* jump to application                        */
     BL_CMD_ABORT        = 0x07, /* abort session                              */
+    BL_CMD_SET_RTC      = 0x08, /* payload: unix_ts u32 LE (PC local time)    */
 } bl_cmd_t;
 
 typedef enum {
