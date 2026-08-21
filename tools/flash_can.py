@@ -13,6 +13,7 @@ Flow (mirrors DieBieMS erase -> write chunks -> jump):
 Examples:
   python flash_can.py --bin app.bin --interface pcan --channel PCAN_USBBUS1
   python flash_can.py --hex ../F407_VET6_Test.hex --max-size 507904
+  python flash_can.py --image CHU_BMS_F407VET6 --max-size 507904
   python flash_can.py --bin _test_app.bin --send-only
   python flash_can.py --bin app.bin --dry-run
   python flash_can.py --bin app.bin --no-progress-window

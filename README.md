@@ -55,6 +55,8 @@ python flash_can.py --bin app.bin --interface pcan --channel PCAN_USBBUS1 --no-p
 # F407VE：可直接给 Keil 的 .hex（自动调用 Hex2bin-2.5 → .bin）
 python flash_can.py --image F407_VET6_Test --interface pcan --channel PCAN_USBBUS1 --max-size 507904 --no-progress
 python flash_can.py --hex ../F407_VET6_Test.hex --max-size 507904 --no-progress
+# CHU BMS APP（仓库根目录 CHU_BMS_F407VET6.hex；PyCharm：flash_can_pcan_chu_bms）
+python flash_can.py --image CHU_BMS_F407VET6 --interface pcan --channel PCAN_USBBUS1 --max-size 507904
 ```
 
 流程：`GET_INFO → ERASE → SET_ADDR/WRITE_DATA → CRC → JUMP_APP`

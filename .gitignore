@@ -1,16 +1,41 @@
+# --- Keil / MDK build outputs ---
 *.o
+*.d
+*.crf
+*.axf
 *.elf
 *.bin
-*.hex
 *.map
 *.lst
+*.lnp
+*.dep
+*.htm
+*.build_log.htm
+*_sct.Bak
+*.Bak
 *.uvguix*
-*.o
+
 Debug/
 Release/
-MDK-ARM/RTE/
+**/MDK-ARM/RTE/
+**/RTE/
+
+# --- Debugger / logs ---
+**/JLinkLog.txt
+**/JLinkSettings.ini
+*.log
+
+# --- IDE / Python ---
 .vscode/
+.idea/workspace.xml
+.idea/shelf/
 __pycache__/
 *.pyc
 .venv/
 venv/
+
+# --- Cloud sync noise ---
+*.baiduyun.uploading.cfg
+*.baiduyun.downloading.cfg
+*.baiduyun.p.downloading
+*.baiduyun.p.uploading
