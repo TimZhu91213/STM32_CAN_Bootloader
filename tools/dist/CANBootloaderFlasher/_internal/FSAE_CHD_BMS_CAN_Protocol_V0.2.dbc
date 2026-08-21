@@ -1,0 +1,494 @@
+VERSION "FSAE_CHD_BMS_CAN_Protocol_V0.2"
+
+
+NS_ :
+	NS_DESC_
+	CM_
+	BA_DEF_
+	BA_
+	VAL_
+	CAT_DEF_
+	CAT_
+	FILTER
+	BA_DEF_DEF_
+	EV_DATA_
+	ENVVAR_DATA_
+	SGTYPE_
+	SGTYPE_VAL_
+	BA_DEF_SGTYPE_
+	BA_SGTYPE_
+	SIG_TYPE_REF_
+	VAL_TABLE_
+	SIG_GROUP_
+	SIG_VALTYPE_
+	SIGTYPE_VALTYPE_
+	BO_TX_BU_
+	BA_DEF_REL_
+	BA_REL_
+	BA_DEF_DEF_REL_
+	BU_SG_REL_
+	BU_EV_REL_
+	BU_BO_REL_
+	SG_MUL_VAL_
+
+BS_:
+
+BU_: BMS VCU
+
+BO_ 2556444915 BMS_HCU_INFO: 8 BMS
+ SG_ BatVoltage : 7|16@0+ (0.1,0) [0|6553.5] "V"  VCU
+ SG_ BatCurrent : 23|16@0+ (0.1,-1000) [-1000|5553.5] "A"  VCU
+ SG_ BatSoc : 39|8@0+ (1,0) [0|255] "%"  VCU
+ SG_ BatSoh : 47|8@0+ (1,0) [0|255] "%"  VCU
+ SG_ BatState : 55|4@0+ (1,0) [0|15] ""  VCU
+ SG_ BatAlmLv : 51|4@0+ (1,0) [0|15] ""  VCU
+ SG_ BatLife : 63|8@0+ (1,0) [0|255] ""  VCU
+
+BO_ 2556510451 BMS_HCU_MAXV: 8 BMS
+ SG_ MaxCellVolt : 7|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ MinCellVolt : 23|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ MaxCellVoltNo : 39|8@0+ (1,0) [0|255] ""  VCU
+ SG_ MinCellVoltNo : 47|8@0+ (1,0) [0|255] ""  VCU
+
+BO_ 2556575987 BMS_HCU_MAXT: 8 BMS
+ SG_ MaxTemp : 7|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ MinTemp : 23|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ MaxTempNo : 39|8@0+ (1,0) [0|255] ""  VCU
+ SG_ MinTempNo : 47|8@0+ (1,0) [0|255] ""  VCU
+ SG_ CoolingCtl : 55|8@0+ (1,0) [0|255] ""  VCU
+ SG_ HeatingCtl : 63|8@0+ (1,0) [0|255] ""  VCU
+
+BO_ 2556641523 BMS_MCU_RELAY: 8 BMS
+ SG_ PosRlyStr : 7|2@0+ (1,0) [0|3] ""  VCU
+ SG_ NegRlyStr : 5|2@0+ (1,0) [0|3] ""  VCU
+ SG_ PreRlyStr : 3|2@0+ (1,0) [0|3] ""  VCU
+ SG_ OnChrRlyStr : 1|2@0+ (1,0) [0|3] ""  VCU
+ SG_ OffChrRlyStr : 15|2@0+ (1,0) [0|3] ""  VCU
+ SG_ ChrState : 23|4@0+ (1,0) [0|15] ""  VCU
+ SG_ ChrCommunication : 19|1@0+ (1,0) [0|1] ""  VCU
+ SG_ ChrOFFCC2 : 18|1@0+ (1,0) [0|1] ""  VCU
+ SG_ ChrONCC : 17|2@0+ (1,0) [0|3] ""  VCU
+ SG_ ChrReqVolt : 39|16@0+ (0.1,0) [0|6553.5] "V"  VCU
+ SG_ ChrReqCurr : 55|16@0+ (0.1,0) [0|6553.5] "A"  VCU
+
+BO_ 2556707059 BMS_HCU_POWER: 8 BMS
+ SG_ MaxChrCurtLimit : 7|16@0+ (1,0) [0|65535] "A"  VCU
+ SG_ MaxDisCurtLimit : 23|16@0+ (1,0) [0|65535] "A"  VCU
+ SG_ MaxChrPowerLimit : 39|16@0+ (0.1,0) [0|6553.5] "kW"  VCU
+ SG_ MaxDisPowerLimit : 55|16@0+ (0.1,0) [0|6553.5] "kW"  VCU
+
+BO_ 2556772595 BMS_HCU_ALARM: 8 BMS
+ SG_ ALM_CELL_OV : 7|2@0+ (1,0) [0|3] ""  VCU
+ SG_ ALM_CELL_UV : 5|2@0+ (1,0) [0|3] ""  VCU
+ SG_ ALM_CELL_OT : 3|2@0+ (1,0) [0|3] ""  VCU
+ SG_ ALM_CELL_UT : 1|2@0+ (1,0) [0|3] ""  VCU
+ SG_ ALM_CELL_LBK : 15|1@0+ (1,0) [0|1] ""  VCU
+ SG_ ALM_CELL_TBK : 14|1@0+ (1,0) [0|1] ""  VCU
+ SG_ ALM_BATT_DV : 13|2@0+ (1,0) [0|3] ""  VCU
+ SG_ ALM_BATT_DT : 11|2@0+ (1,0) [0|3] ""  VCU
+ SG_ ALM_BATT_OV : 9|2@0+ (1,0) [0|3] ""  VCU
+ SG_ ALM_BATT_UV : 23|2@0+ (1,0) [0|3] ""  VCU
+ SG_ ALM_BATT_OC : 21|2@0+ (1,0) [0|3] ""  VCU
+ SG_ ALM_BATT_UC : 19|2@0+ (1,0) [0|3] ""  VCU
+ SG_ ALM_CHRG_OCS : 17|2@0+ (1,0) [0|3] ""  VCU
+ SG_ ALM_DSCH_OCS : 31|2@0+ (1,0) [0|3] ""  VCU
+ SG_ ALM_CHRG_OCT : 29|2@0+ (1,0) [0|3] ""  VCU
+ SG_ ALM_DSCH_OCT : 27|2@0+ (1,0) [0|3] ""  VCU
+ SG_ ALM_BSU_OFFLINE : 25|2@0+ (1,0) [0|3] ""  VCU
+ SG_ ALM_BSU_FAULT : 39|1@0+ (1,0) [0|1] ""  VCU
+ SG_ ALM_LEAK_OC : 38|2@0+ (1,0) [0|3] ""  VCU
+ SG_ ALM_PRECHRG_FAIL : 36|1@0+ (1,0) [0|1] ""  VCU
+ SG_ ALM_AUX_FAIL : 35|1@0+ (1,0) [0|1] ""  VCU
+ SG_ ALM_BMU_FAIL : 34|1@0+ (1,0) [0|1] ""  VCU
+ SG_ ALM_VCU_OFFLINE : 33|2@0+ (1,0) [0|3] ""  VCU
+ SG_ ALM_HVREL_FAIL : 47|1@0+ (1,0) [0|1] ""  VCU
+ SG_ ALM_HALL_BREAK : 46|1@0+ (1,0) [0|1] ""  VCU
+
+BO_ 2557493491 BMS_CELL_V_00: 8 BMS
+ SG_ Cell1_mV : 7|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell2_mV : 23|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell3_mV : 39|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell4_mV : 55|16@0+ (1,0) [0|65535] "mV"  VCU
+
+BO_ 2557559027 BMS_CELL_V_01: 8 BMS
+ SG_ Cell5_mV : 7|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell6_mV : 23|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell7_mV : 39|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell8_mV : 55|16@0+ (1,0) [0|65535] "mV"  VCU
+
+BO_ 2557624563 BMS_CELL_V_02: 8 BMS
+ SG_ Cell9_mV : 7|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell10_mV : 23|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell11_mV : 39|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell12_mV : 55|16@0+ (1,0) [0|65535] "mV"  VCU
+
+BO_ 2557690099 BMS_CELL_V_03: 8 BMS
+ SG_ Cell13_mV : 7|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell14_mV : 23|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell15_mV : 39|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell16_mV : 55|16@0+ (1,0) [0|65535] "mV"  VCU
+
+BO_ 2557755635 BMS_CELL_V_04: 8 BMS
+ SG_ Cell17_mV : 7|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell18_mV : 23|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell19_mV : 39|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell20_mV : 55|16@0+ (1,0) [0|65535] "mV"  VCU
+
+BO_ 2557821171 BMS_CELL_V_05: 8 BMS
+ SG_ Cell21_mV : 7|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell22_mV : 23|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell23_mV : 39|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell24_mV : 55|16@0+ (1,0) [0|65535] "mV"  VCU
+
+BO_ 2557886707 BMS_CELL_V_06: 8 BMS
+ SG_ Cell25_mV : 7|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell26_mV : 23|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell27_mV : 39|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell28_mV : 55|16@0+ (1,0) [0|65535] "mV"  VCU
+
+BO_ 2557952243 BMS_CELL_V_07: 8 BMS
+ SG_ Cell29_mV : 7|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell30_mV : 23|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell31_mV : 39|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell32_mV : 55|16@0+ (1,0) [0|65535] "mV"  VCU
+
+BO_ 2558017779 BMS_CELL_V_08: 8 BMS
+ SG_ Cell33_mV : 7|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell34_mV : 23|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell35_mV : 39|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell36_mV : 55|16@0+ (1,0) [0|65535] "mV"  VCU
+
+BO_ 2558083315 BMS_CELL_V_09: 8 BMS
+ SG_ Cell37_mV : 7|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell38_mV : 23|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell39_mV : 39|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell40_mV : 55|16@0+ (1,0) [0|65535] "mV"  VCU
+
+BO_ 2558148851 BMS_CELL_V_10: 8 BMS
+ SG_ Cell41_mV : 7|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell42_mV : 23|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell43_mV : 39|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell44_mV : 55|16@0+ (1,0) [0|65535] "mV"  VCU
+
+BO_ 2558214387 BMS_CELL_V_11: 8 BMS
+ SG_ Cell45_mV : 7|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell46_mV : 23|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell47_mV : 39|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell48_mV : 55|16@0+ (1,0) [0|65535] "mV"  VCU
+
+BO_ 2558279923 BMS_CELL_V_12: 8 BMS
+ SG_ Cell49_mV : 7|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell50_mV : 23|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell51_mV : 39|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell52_mV : 55|16@0+ (1,0) [0|65535] "mV"  VCU
+
+BO_ 2558345459 BMS_CELL_V_13: 8 BMS
+ SG_ Cell53_mV : 7|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell54_mV : 23|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell55_mV : 39|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell56_mV : 55|16@0+ (1,0) [0|65535] "mV"  VCU
+
+BO_ 2558410995 BMS_CELL_V_14: 8 BMS
+ SG_ Cell57_mV : 7|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell58_mV : 23|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell59_mV : 39|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell60_mV : 55|16@0+ (1,0) [0|65535] "mV"  VCU
+
+BO_ 2558476531 BMS_CELL_V_15: 8 BMS
+ SG_ Cell61_mV : 7|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell62_mV : 23|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell63_mV : 39|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell64_mV : 55|16@0+ (1,0) [0|65535] "mV"  VCU
+
+BO_ 2558542067 BMS_CELL_V_16: 8 BMS
+ SG_ Cell65_mV : 7|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell66_mV : 23|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell67_mV : 39|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell68_mV : 55|16@0+ (1,0) [0|65535] "mV"  VCU
+
+BO_ 2558607603 BMS_CELL_V_17: 8 BMS
+ SG_ Cell69_mV : 7|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell70_mV : 23|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell71_mV : 39|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell72_mV : 55|16@0+ (1,0) [0|65535] "mV"  VCU
+
+BO_ 2558673139 BMS_CELL_V_18: 8 BMS
+ SG_ Cell73_mV : 7|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell74_mV : 23|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell75_mV : 39|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell76_mV : 55|16@0+ (1,0) [0|65535] "mV"  VCU
+
+BO_ 2558738675 BMS_CELL_V_19: 8 BMS
+ SG_ Cell77_mV : 7|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell78_mV : 23|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell79_mV : 39|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell80_mV : 55|16@0+ (1,0) [0|65535] "mV"  VCU
+
+BO_ 2558804211 BMS_CELL_V_20: 8 BMS
+ SG_ Cell81_mV : 7|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell82_mV : 23|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell83_mV : 39|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell84_mV : 55|16@0+ (1,0) [0|65535] "mV"  VCU
+
+BO_ 2558869747 BMS_CELL_V_21: 8 BMS
+ SG_ Cell85_mV : 7|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell86_mV : 23|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell87_mV : 39|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell88_mV : 55|16@0+ (1,0) [0|65535] "mV"  VCU
+
+BO_ 2558935283 BMS_CELL_V_22: 8 BMS
+ SG_ Cell89_mV : 7|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell90_mV : 23|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell91_mV : 39|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell92_mV : 55|16@0+ (1,0) [0|65535] "mV"  VCU
+
+BO_ 2559000819 BMS_CELL_V_23: 8 BMS
+ SG_ Cell93_mV : 7|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell94_mV : 23|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell95_mV : 39|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell96_mV : 55|16@0+ (1,0) [0|65535] "mV"  VCU
+
+BO_ 2559066355 BMS_CELL_V_24: 8 BMS
+ SG_ Cell97_mV : 7|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell98_mV : 23|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell99_mV : 39|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell100_mV : 55|16@0+ (1,0) [0|65535] "mV"  VCU
+
+BO_ 2559131891 BMS_CELL_V_25: 8 BMS
+ SG_ Cell101_mV : 7|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell102_mV : 23|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell103_mV : 39|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell104_mV : 55|16@0+ (1,0) [0|65535] "mV"  VCU
+
+BO_ 2559197427 BMS_CELL_V_26: 8 BMS
+ SG_ Cell105_mV : 7|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell106_mV : 23|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell107_mV : 39|16@0+ (1,0) [0|65535] "mV"  VCU
+ SG_ Cell108_mV : 55|16@0+ (1,0) [0|65535] "mV"  VCU
+
+BO_ 2559262963 BMS_CELL_T_00: 8 BMS
+ SG_ Temp1_degC : 7|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ Temp2_degC : 23|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ Temp3_degC : 39|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ Temp4_degC : 55|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+
+BO_ 2559328499 BMS_CELL_T_01: 8 BMS
+ SG_ Temp5_degC : 7|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ Temp6_degC : 23|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ Temp7_degC : 39|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ Temp8_degC : 55|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+
+BO_ 2559394035 BMS_CELL_T_02: 8 BMS
+ SG_ Temp9_degC : 7|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ Temp10_degC : 23|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ Temp11_degC : 39|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ Temp12_degC : 55|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+
+BO_ 2559459571 BMS_CELL_T_03: 8 BMS
+ SG_ Temp13_degC : 7|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ Temp14_degC : 23|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ Temp15_degC : 39|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ Temp16_degC : 55|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+
+BO_ 2559525107 BMS_CELL_T_04: 8 BMS
+ SG_ Temp17_degC : 7|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ Temp18_degC : 23|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ Temp19_degC : 39|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ Temp20_degC : 55|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+
+BO_ 2559590643 BMS_CELL_T_05: 8 BMS
+ SG_ Temp21_degC : 7|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ Temp22_degC : 23|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ Temp23_degC : 39|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ Temp24_degC : 55|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+
+BO_ 2559656179 BMS_CELL_T_06: 8 BMS
+ SG_ Temp25_degC : 7|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ Temp26_degC : 23|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ Temp27_degC : 39|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ Temp28_degC : 55|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+
+BO_ 2559721715 BMS_CELL_T_07: 8 BMS
+ SG_ Temp29_degC : 7|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ Temp30_degC : 23|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ Temp31_degC : 39|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ Temp32_degC : 55|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+
+BO_ 2559787251 BMS_CELL_T_08: 8 BMS
+ SG_ Temp33_degC : 7|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ Temp34_degC : 23|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ Temp35_degC : 39|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ Temp36_degC : 55|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+
+BO_ 2559852787 BMS_CELL_T_09: 8 BMS
+ SG_ Temp37_degC : 7|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ Temp38_degC : 23|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ Temp39_degC : 39|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ Temp40_degC : 55|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+
+BO_ 2559918323 BMS_CELL_T_10: 8 BMS
+ SG_ Temp41_degC : 7|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ Temp42_degC : 23|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ Temp43_degC : 39|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ Temp44_degC : 55|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+
+BO_ 2559983859 BMS_CELL_T_11: 8 BMS
+ SG_ Temp45_degC : 7|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ Temp46_degC : 23|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ Temp47_degC : 39|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ Temp48_degC : 55|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+
+BO_ 2560049395 BMS_CELL_T_12: 8 BMS
+ SG_ Temp49_degC : 7|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ Temp50_degC : 23|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ Temp51_degC : 39|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ Temp52_degC : 55|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+
+BO_ 2560114931 BMS_CELL_T_13: 8 BMS
+ SG_ Temp53_degC : 7|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ Temp54_degC : 23|16@0+ (0.1,-40) [-40|6513.5] "degC"  VCU
+ SG_ Reserved_T13_2 : 39|16@0+ (1,0) [0|65535] ""  VCU
+ SG_ Reserved_T13_3 : 55|16@0+ (1,0) [0|65535] ""  VCU
+
+BA_DEF_ BO_  "GenMsgCycleTime" INT 0 65535;
+BA_DEF_ BO_  "GenMsgSendType" ENUM  "cyclic","spontaneous","not-used","cyclicAndSpontaneous","not-used","cyclicIfActive","NoMsgSendType";
+BA_DEF_  "DBName" STRING ;
+BA_DEF_  "BusType" STRING ;
+BA_DEF_DEF_  "GenMsgCycleTime" 0;
+BA_DEF_DEF_  "GenMsgSendType" "NoMsgSendType";
+BA_DEF_DEF_  "DBName" "";
+BA_DEF_DEF_  "BusType" "CAN";
+BA_ "DBName" "FSAE_CHD_BMS_CAN_Protocol_V0.2";
+BA_ "BusType" "CAN";
+BA_ "GenMsgCycleTime" BO_ 2556444915 10;
+BA_ "GenMsgSendType" BO_ 2556444915 0;
+BA_ "GenMsgCycleTime" BO_ 2556510451 250;
+BA_ "GenMsgSendType" BO_ 2556510451 0;
+BA_ "GenMsgCycleTime" BO_ 2556575987 500;
+BA_ "GenMsgSendType" BO_ 2556575987 0;
+BA_ "GenMsgCycleTime" BO_ 2556641523 500;
+BA_ "GenMsgSendType" BO_ 2556641523 0;
+BA_ "GenMsgCycleTime" BO_ 2556707059 100;
+BA_ "GenMsgSendType" BO_ 2556707059 0;
+BA_ "GenMsgCycleTime" BO_ 2556772595 1000;
+BA_ "GenMsgSendType" BO_ 2556772595 5;
+BA_ "GenMsgCycleTime" BO_ 2557493491 100;
+BA_ "GenMsgSendType" BO_ 2557493491 0;
+BA_ "GenMsgCycleTime" BO_ 2557559027 100;
+BA_ "GenMsgSendType" BO_ 2557559027 0;
+BA_ "GenMsgCycleTime" BO_ 2557624563 100;
+BA_ "GenMsgSendType" BO_ 2557624563 0;
+BA_ "GenMsgCycleTime" BO_ 2557690099 100;
+BA_ "GenMsgSendType" BO_ 2557690099 0;
+BA_ "GenMsgCycleTime" BO_ 2557755635 100;
+BA_ "GenMsgSendType" BO_ 2557755635 0;
+BA_ "GenMsgCycleTime" BO_ 2557821171 100;
+BA_ "GenMsgSendType" BO_ 2557821171 0;
+BA_ "GenMsgCycleTime" BO_ 2557886707 100;
+BA_ "GenMsgSendType" BO_ 2557886707 0;
+BA_ "GenMsgCycleTime" BO_ 2557952243 100;
+BA_ "GenMsgSendType" BO_ 2557952243 0;
+BA_ "GenMsgCycleTime" BO_ 2558017779 100;
+BA_ "GenMsgSendType" BO_ 2558017779 0;
+BA_ "GenMsgCycleTime" BO_ 2558083315 100;
+BA_ "GenMsgSendType" BO_ 2558083315 0;
+BA_ "GenMsgCycleTime" BO_ 2558148851 100;
+BA_ "GenMsgSendType" BO_ 2558148851 0;
+BA_ "GenMsgCycleTime" BO_ 2558214387 100;
+BA_ "GenMsgSendType" BO_ 2558214387 0;
+BA_ "GenMsgCycleTime" BO_ 2558279923 100;
+BA_ "GenMsgSendType" BO_ 2558279923 0;
+BA_ "GenMsgCycleTime" BO_ 2558345459 100;
+BA_ "GenMsgSendType" BO_ 2558345459 0;
+BA_ "GenMsgCycleTime" BO_ 2558410995 100;
+BA_ "GenMsgSendType" BO_ 2558410995 0;
+BA_ "GenMsgCycleTime" BO_ 2558476531 100;
+BA_ "GenMsgSendType" BO_ 2558476531 0;
+BA_ "GenMsgCycleTime" BO_ 2558542067 100;
+BA_ "GenMsgSendType" BO_ 2558542067 0;
+BA_ "GenMsgCycleTime" BO_ 2558607603 100;
+BA_ "GenMsgSendType" BO_ 2558607603 0;
+BA_ "GenMsgCycleTime" BO_ 2558673139 100;
+BA_ "GenMsgSendType" BO_ 2558673139 0;
+BA_ "GenMsgCycleTime" BO_ 2558738675 100;
+BA_ "GenMsgSendType" BO_ 2558738675 0;
+BA_ "GenMsgCycleTime" BO_ 2558804211 100;
+BA_ "GenMsgSendType" BO_ 2558804211 0;
+BA_ "GenMsgCycleTime" BO_ 2558869747 100;
+BA_ "GenMsgSendType" BO_ 2558869747 0;
+BA_ "GenMsgCycleTime" BO_ 2558935283 100;
+BA_ "GenMsgSendType" BO_ 2558935283 0;
+BA_ "GenMsgCycleTime" BO_ 2559000819 100;
+BA_ "GenMsgSendType" BO_ 2559000819 0;
+BA_ "GenMsgCycleTime" BO_ 2559066355 100;
+BA_ "GenMsgSendType" BO_ 2559066355 0;
+BA_ "GenMsgCycleTime" BO_ 2559131891 100;
+BA_ "GenMsgSendType" BO_ 2559131891 0;
+BA_ "GenMsgCycleTime" BO_ 2559197427 100;
+BA_ "GenMsgSendType" BO_ 2559197427 0;
+BA_ "GenMsgCycleTime" BO_ 2559262963 100;
+BA_ "GenMsgSendType" BO_ 2559262963 0;
+BA_ "GenMsgCycleTime" BO_ 2559328499 100;
+BA_ "GenMsgSendType" BO_ 2559328499 0;
+BA_ "GenMsgCycleTime" BO_ 2559394035 100;
+BA_ "GenMsgSendType" BO_ 2559394035 0;
+BA_ "GenMsgCycleTime" BO_ 2559459571 100;
+BA_ "GenMsgSendType" BO_ 2559459571 0;
+BA_ "GenMsgCycleTime" BO_ 2559525107 100;
+BA_ "GenMsgSendType" BO_ 2559525107 0;
+BA_ "GenMsgCycleTime" BO_ 2559590643 100;
+BA_ "GenMsgSendType" BO_ 2559590643 0;
+BA_ "GenMsgCycleTime" BO_ 2559656179 100;
+BA_ "GenMsgSendType" BO_ 2559656179 0;
+BA_ "GenMsgCycleTime" BO_ 2559721715 100;
+BA_ "GenMsgSendType" BO_ 2559721715 0;
+BA_ "GenMsgCycleTime" BO_ 2559787251 100;
+BA_ "GenMsgSendType" BO_ 2559787251 0;
+BA_ "GenMsgCycleTime" BO_ 2559852787 100;
+BA_ "GenMsgSendType" BO_ 2559852787 0;
+BA_ "GenMsgCycleTime" BO_ 2559918323 100;
+BA_ "GenMsgSendType" BO_ 2559918323 0;
+BA_ "GenMsgCycleTime" BO_ 2559983859 100;
+BA_ "GenMsgSendType" BO_ 2559983859 0;
+BA_ "GenMsgCycleTime" BO_ 2560049395 100;
+BA_ "GenMsgSendType" BO_ 2560049395 0;
+BA_ "GenMsgCycleTime" BO_ 2560114931 100;
+BA_ "GenMsgSendType" BO_ 2560114931 0;
+VAL_ 2556444915 BatState 1 "Sleep" 2 "PowerUp" 3 "Standby" 4 "Precharge" 5 "Run" 6 "Shutdown" 7 "Error" ;
+VAL_ 2556444915 BatAlmLv 0 "Normal" 1 "Lv1_MostSevere" 2 "Lv2" 3 "Lv3" 4 "Lv4" ;
+VAL_ 2556575987 CoolingCtl 0 "StopCooling" 1 "StartCooling" ;
+VAL_ 2556575987 HeatingCtl 0 "StopHeating" 1 "StartHeating" ;
+VAL_ 2556641523 PosRlyStr 0 "Open" 1 "Close" 2 "Error" ;
+VAL_ 2556641523 NegRlyStr 0 "Open" 1 "Close" 2 "Error" ;
+VAL_ 2556641523 PreRlyStr 0 "Open" 1 "Close" 2 "Error" ;
+VAL_ 2556641523 OnChrRlyStr 0 "Open" 1 "Close" 2 "Error" ;
+VAL_ 2556641523 OffChrRlyStr 0 "Open" 1 "Close" 2 "Error" ;
+VAL_ 2556641523 ChrState 0 "Stop" 1 "EnterCharge" 2 "CC" 3 "Trickle" 4 "Complete" ;
+VAL_ 2556641523 ChrCommunication 0 "Timeout" 1 "Online" ;
+VAL_ 2556641523 ChrOFFCC2 0 "NotConnected" 1 "Connected" ;
+VAL_ 2556641523 ChrONCC 0 "NotConnected" 1 "220Ohm" 2 "680Ohm" 3 "Unknown" ;
+VAL_ 2556772595 ALM_CELL_OV 0 "Normal" 1 "Lv1_MostSevere" 2 "Lv2" 3 "Lv3" ;
+VAL_ 2556772595 ALM_CELL_UV 0 "Normal" 1 "Lv1_MostSevere" 2 "Lv2" 3 "Lv3" ;
+VAL_ 2556772595 ALM_CELL_OT 0 "Normal" 1 "Lv1_MostSevere" 2 "Lv2" 3 "Lv3" ;
+VAL_ 2556772595 ALM_CELL_UT 0 "Normal" 1 "Lv1_MostSevere" 2 "Lv2" 3 "Lv3" ;
+VAL_ 2556772595 ALM_CELL_LBK 0 "Normal" 1 "Alarm" ;
+VAL_ 2556772595 ALM_CELL_TBK 0 "Normal" 1 "Alarm" ;
+VAL_ 2556772595 ALM_BATT_DV 0 "Normal" 1 "Lv1_MostSevere" 2 "Lv2" 3 "Lv3" ;
+VAL_ 2556772595 ALM_BATT_DT 0 "Normal" 1 "Lv1_MostSevere" 2 "Lv2" 3 "Lv3" ;
+VAL_ 2556772595 ALM_BATT_OV 0 "Normal" 1 "Lv1_MostSevere" 2 "Lv2" 3 "Lv3" ;
+VAL_ 2556772595 ALM_BATT_UV 0 "Normal" 1 "Lv1_MostSevere" 2 "Lv2" 3 "Lv3" ;
+VAL_ 2556772595 ALM_BATT_OC 0 "Normal" 1 "Lv1_MostSevere" 2 "Lv2" 3 "Lv3" ;
+VAL_ 2556772595 ALM_BATT_UC 0 "Normal" 1 "Lv1_MostSevere" 2 "Lv2" 3 "Lv3" ;
+VAL_ 2556772595 ALM_CHRG_OCS 0 "Normal" 1 "Lv1_MostSevere" 2 "Lv2" 3 "Lv3" ;
+VAL_ 2556772595 ALM_DSCH_OCS 0 "Normal" 1 "Lv1_MostSevere" 2 "Lv2" 3 "Lv3" ;
+VAL_ 2556772595 ALM_CHRG_OCT 0 "Normal" 1 "Lv1_MostSevere" 2 "Lv2" 3 "Lv3" ;
+VAL_ 2556772595 ALM_DSCH_OCT 0 "Normal" 1 "Lv1_MostSevere" 2 "Lv2" 3 "Lv3" ;
+VAL_ 2556772595 ALM_BSU_OFFLINE 0 "Normal" 1 "Lv1_MostSevere" 2 "Lv2" 3 "Lv3" ;
+VAL_ 2556772595 ALM_BSU_FAULT 0 "Normal" 1 "Alarm" ;
+VAL_ 2556772595 ALM_LEAK_OC 0 "Normal" 1 "Lv1_MostSevere" 2 "Lv2" 3 "Lv3" ;
+VAL_ 2556772595 ALM_PRECHRG_FAIL 0 "Normal" 1 "Alarm" ;
+VAL_ 2556772595 ALM_AUX_FAIL 0 "Normal" 1 "Alarm" ;
+VAL_ 2556772595 ALM_BMU_FAIL 0 "Normal" 1 "Alarm" ;
+VAL_ 2556772595 ALM_VCU_OFFLINE 0 "Normal" 1 "Lv1_MostSevere" 2 "Lv2" 3 "Lv3" ;
+VAL_ 2556772595 ALM_HVREL_FAIL 0 "Normal" 1 "Alarm" ;
+VAL_ 2556772595 ALM_HALL_BREAK 0 "Normal" 1 "Alarm" ;

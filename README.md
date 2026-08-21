@@ -47,6 +47,30 @@ APP→BL：SRAM magic `0xB00710AD`（F103 `@0x20004FF0`，F407 `@0x2001BFF0`）+
 
 ## 主机脚本
 
+### GUI（gui-develop 分支）
+
+```bash
+cd tools
+pip install -r requirements.txt
+python flash_gui.py
+```
+
+图形界面仅支持 **PCAN**（通道 + 波特率），`.hex` 通过 `hex2bin.exe` 转换。
+
+**电芯监控**（`电芯监控` 标签页）：按 `FSAE_CHD_BMS_CAN_Protocol_V0.2.dbc` 解码 `BMS_CELL_V_*` / `BMS_CELL_T_*` 及汇总帧，显示 108 节电压与 54 路温度。需 BMS 在 APP 模式下向 CAN 总线发送对应扩展帧。
+
+### 打包 exe（Windows）
+
+```powershell
+cd tools
+.\build_exe.ps1
+```
+
+输出目录：`tools/dist/CANBootloaderFlasher/`（内含 `CANBootloaderFlasher.exe` 与 `hex2bin.exe`）。  
+将整个文件夹压缩分发给队友即可；使用者电脑仍需安装 [PCAN 驱动](https://www.peak-system.com/)。
+
+### 命令行
+
 ```bash
 cd tools
 pip install -r requirements.txt
@@ -92,3 +116,6 @@ Keil 等 IDE 常输出 hex/mot；主机脚本认 `.bin`。可用 `Hex2bin` 转�
 
 ### V1.0.2 | 2026_08_15
 - 添加了can bootloader握手成功后、烧录开始前，同步stm32的rtc时间为当前windows设备的utc标准时间(相较于北京时间晚8个小时)
+
+### V1.1.0 | 2026_08_21
+- 提供了gui上位机，图形化操作，可实现烧录、监看电芯电压、温度

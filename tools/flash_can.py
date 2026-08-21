@@ -27,9 +27,12 @@ import struct
 import subprocess
 import sys
 import time
+from dataclasses import dataclass
 from pathlib import Path
+from typing import Protocol
 
 from flash_progress import FlashProgressUI
+from can_backend import open_can_bus
 from bl_protocol import (
     BL_CAN_ID_CMD,
     BL_CAN_ID_RSP,
@@ -63,15 +66,19 @@ class CanTransport:
         bitrate: int,
         dry_run: bool,
         verbose_tx: bool = False,
+        app_name: str | None = None,
     ):
         self.dry_run = dry_run
         self.verbose_tx = verbose_tx or dry_run
         self.bus = None
         if dry_run:
             return
-        import can  # type: ignore
-
-        self.bus = can.Bus(interface=interface, channel=channel, bitrate=bitrate)
+        self.bus = open_can_bus(
+            interface=interface or "pcan",
+            channel=channel or "PCAN_USBBUS1",
+            bitrate=bitrate,
+            app_name=app_name,
+        )
 
     def close(self) -> None:
         if self.bus is not None:
@@ -371,22 +378,50 @@ def abort_session(tr: CanTransport, timeout: float) -> None:
     tr.recv(timeout, BL_CMD_ABORT)
 
 
+def _is_frozen() -> bool:
+    return getattr(sys, "frozen", False)
+
+
+def app_dir() -> Path:
+    """Directory containing flash_can / the packaged exe."""
+    if _is_frozen():
+        return Path(sys.executable).resolve().parent
+    return Path(__file__).resolve().parent
+
+
 def repo_root() -> Path:
+    if _is_frozen():
+        return app_dir()
     return Path(__file__).resolve().parents[1]
 
 
 def find_hex2bin() -> Path:
+    candidates: list[Path] = []
+    if _is_frozen():
+        meipass = getattr(sys, "_MEIPASS", None)
+        if meipass:
+            candidates.append(Path(meipass) / "hex2bin.exe")
+        candidates.append(app_dir() / "hex2bin.exe")
     root = repo_root()
-    for rel in (
-        Path("Hex2bin-2.5") / "bin" / "Release" / "hex2bin.exe",
-        Path("Hex2bin-2.5") / "bin" / "Debug" / "hex2bin.exe",
-        Path("Hex2bin-2.5") / "hex2bin.exe",
-    ):
-        cand = root / rel
+    candidates.extend(
+        [
+            app_dir() / "hex2bin.exe",
+            root / "hex2bin.exe",
+            root / "Hex2bin-2.5" / "bin" / "Release" / "hex2bin.exe",
+            root / "Hex2bin-2.5" / "bin" / "Debug" / "hex2bin.exe",
+            root / "Hex2bin-2.5" / "hex2bin.exe",
+        ]
+    )
+    seen: set[str] = set()
+    for cand in candidates:
+        key = str(cand.resolve()) if cand.exists() else str(cand)
+        if key in seen:
+            continue
+        seen.add(key)
         if cand.is_file():
             return cand
     raise FileNotFoundError(
-        "hex2bin.exe not found under Hex2bin-2.5/bin/Release (or Debug)"
+        "hex2bin.exe not found (expected beside the app or under Hex2bin-2.5/bin/Release)"
     )
 
 
@@ -490,6 +525,116 @@ def resolve_flash_bin(args: argparse.Namespace) -> Path:
     raise ValueError("specify --bin, --hex, or --image")
 
 
+class FlashProgress(Protocol):
+    def set_stage(self, stage: str, pct: float | None = None, detail: str = "") -> None: ...
+    def begin_write(self) -> None: ...
+    def set_write(self, done: int, total: int) -> None: ...
+    def finish(self, ok: bool, message: str = "") -> None: ...
+    def close(self) -> None: ...
+
+
+@dataclass
+class FlashOptions:
+    bin_path: Path
+    interface: str = "pcan"
+    channel: str = "PCAN_USBBUS1"
+    bitrate: int = 500000
+    gap_ms: float = 0.5
+    timeout: float = 3.0
+    dry_run: bool = False
+    send_only: bool = False
+    no_jump: bool = False
+    no_set_rtc: bool = False
+    max_size: int = F103_APP_MAX_SIZE
+    verbose: bool = False
+    app_name: str | None = None
+
+
+def flash_image(opts: FlashOptions, ui: FlashProgress | None = None) -> int:
+    """Run the full CAN flash session. Returns 0 on success."""
+    bin_path = opts.bin_path.resolve()
+    image = bin_path.read_bytes()
+    if not image:
+        raise ValueError("empty bin")
+    if len(image) > opts.max_size:
+        raise ValueError(f"image {len(image)} > max {opts.max_size}")
+
+    sp = struct.unpack_from("<I", image, 0)[0]
+    if (sp & 0xFFF00000) not in (0x20000000,):
+        print(f"warning: vector SP=0x{sp:08X} unusual (expected 0x2000xxxx)")
+
+    send_only = bool(opts.send_only)
+    gap_s = opts.gap_ms / 1000.0
+    tr = CanTransport(
+        opts.interface,
+        opts.channel,
+        opts.bitrate,
+        opts.dry_run,
+        verbose_tx=bool(opts.verbose) or send_only or opts.dry_run,
+        app_name=opts.app_name,
+    )
+    try:
+        mode = "dry-run" if opts.dry_run else ("send-only" if send_only else "normal")
+        print(
+            f"mode={mode} image={bin_path} size={len(image)} "
+            f"crc=0x{crc32_mpeg2_like(image):08X}"
+        )
+        if ui is not None:
+            ui.set_stage("握手 GET_INFO", pct=1.0)
+        handshake(tr, opts.timeout, send_only)
+        if gap_s:
+            time.sleep(gap_s)
+        if not opts.no_set_rtc:
+            if ui is not None:
+                ui.set_stage("同步 RTC", pct=2.0)
+            set_rtc(tr, opts.timeout, send_only)
+            if gap_s:
+                time.sleep(gap_s)
+        if ui is not None:
+            ui.set_stage("擦除 Flash", pct=4.0, detail="按扇区擦除，可能需要数秒")
+        erase(tr, len(image), max(opts.timeout, 5.0), send_only)
+        if gap_s:
+            time.sleep(gap_s)
+        if ui is not None:
+            ui.begin_write()
+        write_image(
+            tr,
+            image,
+            opts.timeout,
+            progress=ui is None,
+            send_only=send_only,
+            gap_s=gap_s,
+            on_progress=None if ui is None else ui.set_write,
+        )
+        if gap_s:
+            time.sleep(gap_s)
+        if ui is not None:
+            ui.set_stage("CRC 校验", pct=96.0)
+        verify_crc(tr, image, opts.timeout, send_only)
+        if not opts.no_jump:
+            if gap_s:
+                time.sleep(gap_s)
+            if ui is not None:
+                ui.set_stage("跳转 APP", pct=99.0)
+            jump_app(tr, opts.timeout, send_only)
+        print("done")
+        if ui is not None:
+            ui.finish(True, "烧录完成")
+        return 0
+    except Exception as exc:
+        print(f"FAILED: {exc}", file=sys.stderr)
+        if ui is not None:
+            ui.finish(False, str(exc))
+        if not send_only and not opts.dry_run:
+            try:
+                abort_session(tr, opts.timeout)
+            except Exception:
+                pass
+        raise
+    finally:
+        tr.close()
+
+
 def parse_args(argv: list[str]) -> argparse.Namespace:
     p = argparse.ArgumentParser(description="CAN bootloader flasher")
     p.add_argument(
@@ -518,8 +663,13 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         default=None,
         help="Optional hex2bin -t floor (e.g. 0x08004000) if HEX contains lower regions",
     )
-    p.add_argument("--interface", default="pcan", help="python-can interface (pcan/candlelight/socketcan/...)")
-    p.add_argument("--channel", default="PCAN_USBBUS1", help="CAN channel (PCAN: PCAN_USBBUS1)")
+    p.add_argument("--interface", default="pcan", help="python-can interface (pcan/vector/candlelight/socketcan/...)")
+    p.add_argument("--channel", default="PCAN_USBBUS1", help="CAN channel (PCAN: PCAN_USBBUS1; Vector: 0/1/…) ")
+    p.add_argument(
+        "--app-name",
+        default=None,
+        help="Vector XL application name (default CANBootloaderFlasher; avoid CANalyzer if CANoe is open)",
+    )
     p.add_argument("--bitrate", type=int, default=500000, help="CAN bitrate")
     p.add_argument("--gap-ms", type=float, default=0.5, help="Delay between frames (ms, default 0.5)")
     p.add_argument("--timeout", type=float, default=3.0, help="Per-frame response timeout (s)")
@@ -566,95 +716,36 @@ def main(argv: list[str] | None = None) -> int:
         print(f"error: {exc}", file=sys.stderr)
         return 2
 
-    image = bin_path.read_bytes()
-    if not image:
-        print("error: empty bin", file=sys.stderr)
-        return 2
-    if len(image) > args.max_size:
-        print(f"error: image {len(image)} > max {args.max_size}", file=sys.stderr)
-        return 2
-
-    sp = struct.unpack_from("<I", image, 0)[0]
-    if (sp & 0xFFF00000) not in (0x20000000,):
-        print(f"warning: vector SP=0x{sp:08X} unusual (expected 0x2000xxxx)")
-
-    send_only = bool(args.send_only)
-    gap_s = args.gap_ms / 1000.0
     use_window = not args.no_progress and not args.no_progress_window
     ui = None
     if use_window:
-        ui = FlashProgressUI(bin_path.name, len(image))
+        image_size = bin_path.stat().st_size
+        ui = FlashProgressUI(bin_path.name, image_size)
         if not ui.start():
             print("warning: progress window failed to open")
             ui = None
 
-    tr = CanTransport(
-        args.interface,
-        args.channel,
-        args.bitrate,
-        args.dry_run,
-        verbose_tx=bool(args.verbose) or send_only or args.dry_run,
+    opts = FlashOptions(
+        bin_path=bin_path,
+        interface=args.interface,
+        channel=args.channel,
+        bitrate=args.bitrate,
+        gap_ms=args.gap_ms,
+        timeout=args.timeout,
+        dry_run=args.dry_run,
+        send_only=args.send_only,
+        no_jump=args.no_jump,
+        no_set_rtc=args.no_set_rtc,
+        max_size=args.max_size,
+        verbose=args.verbose,
+        app_name=args.app_name,
     )
     try:
-        mode = "dry-run" if args.dry_run else ("send-only" if send_only else "normal")
-        print(
-            f"mode={mode} image={bin_path} size={len(image)} "
-            f"crc=0x{crc32_mpeg2_like(image):08X}"
-        )
-        if ui is not None:
-            ui.set_stage("握手 GET_INFO", pct=1.0)
-        handshake(tr, args.timeout, send_only)
-        if gap_s:
-            time.sleep(gap_s)
-        if not args.no_set_rtc:
-            if ui is not None:
-                ui.set_stage("同步 RTC", pct=2.0)
-            set_rtc(tr, args.timeout, send_only)
-            if gap_s:
-                time.sleep(gap_s)
-        if ui is not None:
-            ui.set_stage("擦除 Flash", pct=4.0, detail="按扇区擦除，可能需要数秒")
-        erase(tr, len(image), max(args.timeout, 5.0), send_only)
-        if gap_s:
-            time.sleep(gap_s)
-        if ui is not None:
-            ui.begin_write()
-        write_image(
-            tr,
-            image,
-            args.timeout,
-            progress=not args.no_progress and ui is None,
-            send_only=send_only,
-            gap_s=gap_s,
-            on_progress=None if ui is None else ui.set_write,
-        )
-        if gap_s:
-            time.sleep(gap_s)
-        if ui is not None:
-            ui.set_stage("CRC 校验", pct=96.0)
-        verify_crc(tr, image, args.timeout, send_only)
-        if not args.no_jump:
-            if gap_s:
-                time.sleep(gap_s)
-            if ui is not None:
-                ui.set_stage("跳转 APP", pct=99.0)
-            jump_app(tr, args.timeout, send_only)
-        print("done")
-        if ui is not None:
-            ui.finish(True, "烧录完成")
+        flash_image(opts, ui=ui)
         return 0
-    except Exception as exc:
-        print(f"FAILED: {exc}", file=sys.stderr)
-        if ui is not None:
-            ui.finish(False, str(exc))
-        if not send_only and not args.dry_run:
-            try:
-                abort_session(tr, args.timeout)
-            except Exception:
-                pass
+    except Exception:
         return 1
     finally:
-        tr.close()
         if ui is not None:
             ui.close()
 
